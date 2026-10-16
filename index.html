@@ -262,7 +262,7 @@ button{font:inherit;color:inherit;cursor:pointer}
     <div class="btnrow"><input class="inp" type="url" id="bgUrl" placeholder="https://…/photo.jpg" style="flex:1"><button class="btn-s pri" id="bgUse">Use</button></div>
     <div class="btnrow"><label class="btn-s" style="cursor:pointer">Or choose a file<input type="file" id="bgFile" accept="image/*" hidden></label><button class="btn-s" id="bgOff" hidden>Remove image</button></div>
     <div class="row" id="veilRow" hidden><label for="veil">Dim the image</label><input type="range" id="veil" min="0" max="0.85" step="0.05"></div>
-    <p class="small" id="bgMsg">Morae reads the image’s colours and adds a light and a dark colour set made from them under Colours.</p>
+    <p class="small" id="bgMsg">When the image’s site allows it, Morae reads its colours and adds a light and a dark colour set made from them under Colours.</p>
   </section>
   <section>
     <h3>Sound</h3>
@@ -295,8 +295,13 @@ const KEY = 'morae-timers/v1';
 const DEF = { focus: 25, short: 5, long: 15, every: 4, auto: false, theme: 'hourglass', palette: null, sound: 'bell', vol: 0.6, awake: true, kind: 'pomodoro', cdH: 1, cdM: 0, cdHow: 'for', cdAt: '17:00', bg: null, imgPal: null };
 let SET = { ...DEF };
 try { SET = { ...DEF, ...(JSON.parse(localStorage.getItem(KEY)) || {}) }; } catch (e) {}
-// a large background image may not fit in browser storage: then everything else is still saved
-const saveSet = () => { try { localStorage.setItem(KEY, JSON.stringify(SET)); return true; } catch (e) { try { localStorage.setItem(KEY, JSON.stringify({ ...SET, bg: null })); } catch (x) {} return false; } };
+// a chosen image file lives under its own key, so saving settings stays small and fast
+const BGKEY = KEY + '/bg';
+const saveSet = () => { try { const out = { ...SET }; if (SET.bg && String(SET.bg.src).startsWith('data:')) out.bg = { ...SET.bg, src: 'local' }; localStorage.setItem(KEY, JSON.stringify(out)); return true; } catch (e) { return false; } };
+try {
+  if (SET.bg && SET.bg.src === 'local') { const d = localStorage.getItem(BGKEY); SET.bg = d ? { ...SET.bg, src: d } : null; }
+  else if (SET.bg && String(SET.bg.src).startsWith('data:')) { localStorage.setItem(BGKEY, SET.bg.src); saveSet(); } // older versions kept it inside the settings
+} catch (e) {}
 const sysDark = () => matchMedia('(prefers-color-scheme: dark)').matches;
 const allPals = () => SET.imgPal ? PALETTES.concat([SET.imgPal.light, SET.imgPal.dark]) : PALETTES;
 const pal = () => allPals().find(p => p.id === SET.palette) || (sysDark() ? PALETTES[4] : PALETTES[0]);
@@ -654,6 +659,7 @@ function drawTide(f, t, dt){
 /* ---------------- views ---------------- */
 let VIEW = {};
 const digits = g => g.map(x => [...x].map(d => `<span class="d">${d}</span>`).join('')).join('<span class="c">:</span>');
+const setDigits = g => { const el = $('#time'); if (!el) return; const h = digits(g); if (el._h !== h) { el.innerHTML = h; el._h = h; } };
 /* Flip clock: each card keeps its elements. When a digit changes, the old top half falls to the hinge,
    then the new bottom half drops into place (two short turns, like a real split-flap). */
 function flipView(st, lab, round){
@@ -690,21 +696,22 @@ function paintStage(){
   paintBreak();
   const th = SET.theme, st = $('#stage'); cancelAnimationFrame(RAF.id); RAF.id = 0; VIEW = {}; $('#glow').style.setProperty('--ga', '0'); $('#tide').hidden = th !== 'fill';
   const lab = `<div class="label" id="lab">${MODES[ST.mode]}</div>`, round = `<div class="round" id="rnd">${roundText()}</div>`;
-  const loop = (cv, draw, maxD) => { RAF.last = 0; const frame = ts => { const f = fit(cv, maxD); const dt = Math.min(.1, Math.max(0, (ts - (RAF.last || ts)) / 1000)); RAF.last = ts; if (f) try { draw(f, ts / 1000, dt); } catch (e) { console.warn(e); } RAF.id = requestAnimationFrame(frame); }; RAF.id = requestAnimationFrame(frame); };
+  const loop = (cv, draw, maxD) => { RAF.last = 0; const frame = ts => { RAF.id = requestAnimationFrame(frame); if (!ST.running && ts - (RAF.last || 0) < 50) return; // paused or idle: about 20 frames a second is plenty
+    const f = fit(cv, maxD); const dt = Math.min(.1, Math.max(0, (ts - (RAF.last || ts)) / 1000)); RAF.last = ts; if (f) try { draw(f, ts / 1000, dt); } catch (e) { console.warn(e); } }; RAF.id = requestAnimationFrame(frame); };
   if (th === 'classic') {
     st.innerHTML = `<div class="ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="track" cx="60" cy="60" r="54" fill="none" stroke-width="4"/><circle class="bar" id="bar" cx="60" cy="60" r="54" fill="none" stroke-width="4" stroke-linecap="round" stroke-dasharray="339.3"/></svg>
       <div class="inner">${lab}<div class="time" id="time"></div>${round}</div></div>`;
-    VIEW.time = g => { $('#time').innerHTML = digits(g); $('#bar').style.strokeDashoffset = String(339.3 * (isBreak() ? 1 - frac() : frac())); };
+    VIEW.time = g => { setDigits(g); $('#bar').style.strokeDashoffset = String(339.3 * (isBreak() ? 1 - frac() : frac())); };
   } else if (th === 'flip') {
     flipView(st, lab, round);
   } else if (th === 'fill') {
     st.innerHTML = `<div class="vis big">${lab}<div class="time" id="time"></div>${round}</div>`;
     loop($('#tideCv'), drawTide, 1.5);
-    VIEW.time = g => { $('#time').innerHTML = digits(g); };
+    VIEW.time = setDigits;
   } else {
     st.innerHTML = `<div class="vis"><canvas id="cv" aria-hidden="true"></canvas>${lab}<div class="time" id="time"></div>${round}</div>`;
     loop($('#cv'), { hourglass: drawHourglass, liquid: drawLiquid, candle: drawCandle, grow: drawGrow }[th] || drawHourglass, 2);
-    VIEW.time = g => { $('#time').innerHTML = digits(g); };
+    VIEW.time = setDigits;
   }
   tick();
 }
@@ -926,9 +933,12 @@ async function useBg(src){
   SET.bg = { src, veil: SET.bg && SET.bg.veil != null ? SET.bg.veil : .35 };
   SET.imgPal = r.px ? imagePalettes(r.px) : null;
   if (!SET.imgPal && /^img-/.test(SET.palette || '')) SET.palette = null;
-  const kept = saveSet(); applyBg(); applyPalette(); paintSw();
-  const keepNote = kept ? '' : ' This image is too large to remember after you close the page; a smaller one will stay.';
-  if (r.err === 'cors') return bgMsg(`The image is on. That site doesn’t let other pages read its colours, so no colour set was made. Save the image and choose it as a file to get matching colours.${keepNote}`);
+  let kept = true;
+  try { if (src.startsWith('data:')) localStorage.setItem(BGKEY, src); else localStorage.removeItem(BGKEY); } catch (e) { kept = false; }
+  saveSet(); applyBg(); applyPalette(); paintSw();
+  const keepNote = kept ? '' : ' This picture is too large to remember after you close the page; a smaller one will stay.';
+  if (r.err === 'cors') { bgMsg(`The image is on. This site doesn’t share its colours with other pages, so pick a colour set that suits it: <button class="linkish" id="bgSw">show colour sets</button>.${keepNote}`);
+    $('#bgSw').onclick = () => { $('#swatches').scrollIntoView({ behavior: 'smooth', block: 'center' }); $('#swatches').querySelector('[aria-pressed="true"]')?.focus(); }; return; }
   bgMsg(`Colours found${SET.imgPal.neon ? ', with bright neon accents' : ''}. <button class="linkish" id="bgPick">Use the ${pal().dark ? 'dark' : 'light'} image colours</button>, or pick Image · light or Image · dark under Colours.${keepNote}`);
   $('#bgPick').onclick = () => { SET.palette = pal().dark ? 'img-dark' : 'img-light'; saveSet(); applyPalette(); paintSw(); };
 }
@@ -939,7 +949,7 @@ $('#bgFile').onchange = e => { const f = e.target.files[0]; e.target.value = '';
     img.onload = () => { const k = Math.min(1, 1920 / Math.max(img.naturalWidth, img.naturalHeight)), cv = document.createElement('canvas'); cv.width = Math.round(img.naturalWidth * k); cv.height = Math.round(img.naturalHeight * k); cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height); useBg(cv.toDataURL('image/jpeg', .85)); };
     img.onerror = () => bgMsg('That file isn’t an image this browser can open.', true); img.src = rd.result; };
   rd.readAsDataURL(f); };
-$('#bgOff').onclick = () => { SET.bg = null; SET.imgPal = null; if (/^img-/.test(SET.palette || '')) SET.palette = null; saveSet(); applyBg(); applyPalette(); paintSw(); $('#bgUrl').value = ''; bgMsg('Image removed. Paste a link or choose a file to add one.'); };
+$('#bgOff').onclick = () => { try { localStorage.removeItem(BGKEY); } catch (e) {} SET.bg = null; SET.imgPal = null; if (/^img-/.test(SET.palette || '')) SET.palette = null; saveSet(); applyBg(); applyPalette(); paintSw(); $('#bgUrl').value = ''; bgMsg('Image removed. Paste a link or choose a file to add one.'); };
 $('#veil').oninput = e => { if (!SET.bg) return; SET.bg.veil = +e.target.value; applyBg(); };
 $('#veil').onchange = () => saveSet();
 if (SET.bg && SET.bg.src && !String(SET.bg.src).startsWith('data:')) $('#bgUrl').value = SET.bg.src;

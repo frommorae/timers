@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Morae Timers</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Focus timers by Morae: Pomodoro or countdown, with a classic ring, flip clock, hourglass, candle, a glass of water, a page that fills with water and an apple tree that grows while you study.">
+<meta name="description" content="Focus timers by Morae for laptop and phone: Pomodoro or countdown, with a classic ring, flip clock, hourglass, candle, a glass of water, a page that fills with water and an apple tree that grows while you study.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23355C8C'/%3E%3Crect x='17' y='10' width='30' height='4.5' rx='2.2' fill='%23F6F8FB'/%3E%3Crect x='17' y='49.5' width='30' height='4.5' rx='2.2' fill='%23F6F8FB'/%3E%3Cpath d='M21.5 14.5h21c0 9.5-7.5 12.5-7.5 17.5s7.5 8 7.5 17.5h-21c0-9.5 7.5-12.5 7.5-17.5s-7.5-8-7.5-17.5z' fill='%23F6F8FB'/%3E%3Cpath d='M25.5 21h13c-1.2 4.4-5.4 6.4-6.5 9.6-1.1-3.2-5.3-5.2-6.5-9.6z' fill='%23E6BE8A'/%3E%3Cpath d='M23.6 47.4c1.2-5.6 6.4-7.6 8.4-9.6 2 2 7.2 4 8.4 9.6z' fill='%23E6BE8A'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
@@ -20,7 +20,8 @@
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#13100D; --ink:#FFF8EF; --muted:#BBA996; --accent:#FFBD82; --on-accent:#1A1209; --panel:#2A231D; color-scheme:dark } }
 :root[data-theme="dark"]{ --bg:#13100D; --ink:#FFF8EF; --muted:#BBA996; --accent:#FFBD82; --on-accent:#1A1209; --panel:#2A231D; color-scheme:dark }
 [hidden]{display:none!important}
-html,body{height:100%}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%;margin:0}
 body{background:var(--stage);color:var(--ink);font-family:var(--f-ui);font-size:15px;transition:background-color .8s ease;overflow:hidden}
 button{font:inherit;color:inherit;cursor:pointer}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
@@ -30,9 +31,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 .brand{font-family:var(--f-display);font-weight:700;font-size:20px;letter-spacing:-.02em;margin-right:auto}
 .brand b{color:var(--accent);font-weight:700}
 .modes{display:flex;gap:4px;padding:4px;border-radius:999px;background:color-mix(in oklab, var(--ink) 7%, transparent)}
-.modes button{border:0;background:none;padding:7px 16px;border-radius:999px;font-weight:600;font-size:14px;color:var(--muted)}
+.modes button{border:0;background:none;padding:7px 16px;border-radius:999px;font-weight:600;font-size:14px;color:var(--muted);white-space:nowrap}
 .modes button[aria-pressed="true"]{background:var(--panel);color:var(--ink);box-shadow:0 1px 3px color-mix(in oklab, var(--ink) 18%, transparent)}
-.icon-btn{border:1px solid var(--line);background:none;border-radius:999px;padding:7px 14px;font-weight:600;font-size:14px;display:inline-flex;gap:8px;align-items:center}
+.icon-btn{border:1px solid var(--line);background:none;border-radius:999px;padding:7px 14px;font-weight:600;font-size:14px;display:inline-flex;gap:8px;align-items:center;white-space:nowrap}
 .icon-btn:hover{border-color:var(--accent)}
 .top .right{display:flex;gap:8px;margin-left:auto}
 /* stage */
@@ -144,7 +145,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 .kpi{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:2px}
 .kpi b{font-family:var(--f-display);font-weight:500;font-size:26px;font-variant-numeric:tabular-nums}
 .kpi small{color:var(--muted);font-size:12px}
-.heatbox{overflow-x:auto;padding-bottom:4px}
+.sheet>*{min-width:0}
+.heatbox{overflow-x:auto;padding-bottom:4px;max-width:100%}
 .heatgrid{display:grid;grid-template-columns:28px auto;gap:4px 6px;width:max-content}
 .heat-m{display:grid;grid-auto-flow:column;grid-auto-columns:13px;gap:3px;font-size:10.5px;color:var(--muted);height:14px}
 .heat-m span{white-space:nowrap}
@@ -163,21 +165,57 @@ button{font:inherit;color:inherit;cursor:pointer}
 /* fullscreen: only the timer and the start button */
 .full .top,.full .themes,.full .keys,.full .fb-btn{opacity:0;pointer-events:none;transition:opacity .4s}
 .full:hover .top{opacity:1;pointer-events:auto}
-/* desktop only */
-.gate{display:none}
+/* phones and narrow windows: modes on their own row, styles scroll sideways, everything sized to the screen */
 @media (max-width: 760px){
-  .app{display:none}
-  .gate{display:grid;place-content:center;gap:12px;height:100%;text-align:center;padding-left:max(24px, env(safe-area-inset-left, 0px));padding-right:max(24px, env(safe-area-inset-right, 0px))}
-  .gate h1{font-family:var(--f-display);font-size:30px;margin:0}
-  .gate p{color:var(--muted);max-width:30ch;margin:0 auto}
+  .app{padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:10px 12px;gap:6px}
+  .top{flex-wrap:wrap;gap:8px 10px}
+  .brand{font-size:18px}
+  .top .right{gap:6px}
+  .icon-btn{padding:8px 12px;font-size:13.5px}
+  #fsBtn{display:none}
+  .modes{order:3;width:100%;overflow-x:auto;scrollbar-width:none}
+  .modes::-webkit-scrollbar,.themes::-webkit-scrollbar{display:none}
+  .modes button{flex:1 0 auto;padding:9px 12px;font-size:13.5px}
+  .ring{width:min(84vw, 50vh)}
+  .vis canvas{width:min(62vw, 34vh);height:min(78vw, 43vh)}
+  .time{font-size:clamp(52px, 17vw, 96px)}
+  .vis.big .time{font-size:clamp(72px, 25vw, 170px)}
+  .flip{gap:8px}.flip .grp{gap:5px}.flip .sep{gap:10px}.flip .sep i{width:8px;height:8px}
+  .card{--w:clamp(48px, 18vw, 100px);border-radius:9px}
+  .flip.h3 .card{--w:clamp(38px, 12.5vw, 80px)}
+  .card .t,.card .flt{border-radius:9px 9px 0 0}.card .b,.card .flb{border-radius:0 0 9px 9px}
+  .card .tab{width:5px;border-width:1.5px}.card .tab.l{left:-3px}.card .tab.r{right:-3px}
+  .flip-cap{font-size:10.5px;letter-spacing:.14em}
+  .bottom{gap:10px}
+  .go{padding:15px 42px}
+  .ghost{padding:13px 16px}
+  .themes{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;width:100%;padding-bottom:2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .themes button{flex:0 0 auto;padding:9px 14px}
+  .keys,.fb-btn{display:none}
+  .fb{left:max(16px, env(safe-area-inset-left, 0px));right:max(16px, env(safe-area-inset-right, 0px));width:auto;bottom:max(16px, env(safe-area-inset-bottom, 0px))}
+  .modal{padding-block:10px}
+  .sheet{padding:18px 16px;max-height:94vh;gap:14px}
+  .kpis{grid-template-columns:repeat(2, minmax(0, 1fr))}
+  .sess li{grid-template-columns:minmax(0, 1fr) auto;gap:2px 10px}
+  .sess li span:nth-child(3){grid-column:1 / -1;color:var(--muted);font-size:12.5px}
+}
+/* phone turned sideways: little height, so the drawing and digits shrink and the style row hides */
+@media (max-height: 520px) and (orientation: landscape){
+  .vis canvas{height:min(52vh, 300px);width:min(42vh, 240px)}
+  .time{font-size:clamp(40px, 14vh, 80px)}
+  .ring{width:min(70vh, 360px)}
+  .card{--w:clamp(40px, 11vh, 80px)}
+  .vis canvas{height:min(40vh, 260px);width:min(32vh, 210px)}
+  .vis{gap:2px}.label{font-size:11px}.round{font-size:11.5px}
+  .top{gap:10px}.brand{font-size:17px;margin-right:0}
+  .modes{flex:1 1 auto;min-width:0;overflow-x:auto;scrollbar-width:none}.modes button{padding:6px 12px;font-size:13px}
+  .top .right{margin-left:0}.icon-btn{padding:6px 12px;font-size:13px}
+  #fsBtn,.fb-btn{display:none}
+  .app{padding-block:8px 10px;gap:4px}
+  .themes,.keys{display:none}
 }
 @media (prefers-reduced-motion: reduce){ body{transition:none} }
 </style>
-
-<div class="gate" role="note">
-  <h1>Morae <span style="color:var(--accent)">Timers</span></h1>
-  <p>These timers are made for a computer screen. Open this page on a laptop or desktop.</p>
-</div>
 
 <div class="bgimg" id="bgimg" hidden></div>
 <div class="tide" id="tide" hidden aria-hidden="true"><canvas id="tideCv"></canvas></div>
@@ -225,7 +263,7 @@ button{font:inherit;color:inherit;cursor:pointer}
     <h2 id="logT">Your focus time <button class="icon-btn" id="logClose">Close</button></h2>
     <p class="small" id="logWho"></p>
     <div class="kpis" id="logK"></div>
-    <section><h3>Last 26 weeks</h3><div class="heatbox" id="logH"></div></section>
+    <section><h3>Last 26 weeks</h3><div class="heatbox" id="logH"></div><div class="legend" id="logL" style="margin-top:8px"></div></section>
     <section><h3>Recent sessions</h3><ul class="sess" id="logS"></ul></section>
     <div class="btnrow" id="logA"></div>
   </div>
@@ -262,7 +300,7 @@ button{font:inherit;color:inherit;cursor:pointer}
     <div class="btnrow"><input class="inp" type="url" id="bgUrl" placeholder="https://…/photo.jpg" style="flex:1"><button class="btn-s pri" id="bgUse">Use</button></div>
     <div class="btnrow"><label class="btn-s" style="cursor:pointer">Or choose a file<input type="file" id="bgFile" accept="image/*" hidden></label><button class="btn-s" id="bgOff" hidden>Remove image</button></div>
     <div class="row" id="veilRow" hidden><label for="veil">Dim the image</label><input type="range" id="veil" min="0" max="0.85" step="0.05"></div>
-    <p class="small" id="bgMsg">When the image’s site allows it, Morae reads its colours and adds a light and a dark colour set made from them under Colours.</p>
+    <p class="small" id="bgMsg">Morae reads the image’s colours when it can and adds a light and a dark colour set made from them under Colours. If the image’s site doesn’t share them, a tiny copy is read through wsrv.nl, a free image service.</p>
   </section>
   <section>
     <h3>Sound</h3>
@@ -270,6 +308,11 @@ button{font:inherit;color:inherit;cursor:pointer}
     <div class="row"><label for="vol">Volume</label><input type="range" id="vol" min="0" max="1" step="0.05"></div>
     <div class="row"><span></span><button class="ghost" id="testSnd" style="padding:7px 16px">Play it</button></div>
     <div class="row"><label for="awake">Keep the screen awake while running</label><input type="checkbox" id="awake"></div>
+    <p class="small">On a phone, the end sound may not ring while the screen is locked, so keep this ticked.</p>
+  </section>
+  <section class="stack">
+    <h3>Feedback</h3>
+    <div class="btnrow"><button class="btn-s" id="fbFromSet">Note a bug or an idea</button></div>
   </section>
   <section class="stack">
     <h3>Account</h3>
@@ -668,7 +711,7 @@ function flipView(st, lab, round){
   const build = k => {
     n = k; const names = k === 3 ? ['hours', 'minutes', 'seconds'] : ['minutes', 'seconds'];
     $('#flip').innerHTML = names.map((_, i) => `${i ? '<div class="sep" aria-hidden="true"><i></i><i></i></div>' : ''}<div class="grp"><div class="card"></div><div class="card"></div></div>`).join('');
-    $('#flipCap').innerHTML = names.map(x => `<span>${x}</span>`).join('');
+    $('#flip').classList.toggle('h3', k === 3); $('#flipCap').innerHTML = names.map(x => `<span>${x}</span>`).join('');
     cards = [...$('#flip').querySelectorAll('.card')].map(el => {
       el.innerHTML = '<div class="h t"><span></span></div><div class="h b"><span></span></div><div class="h t flt"><span></span><i class="sh"></i></div><div class="h b flb"><span></span><i class="sh"></i></div><i class="seam"></i><i class="tab l"></i><i class="tab r"></i>';
       const q = c => el.querySelector(c); return { el, v: null, T: q('.t:not(.flt)'), B: q('.b:not(.flb)'), FT: q('.flt'), FB: q('.flb'), anims: [] };
@@ -817,9 +860,11 @@ function renderLog(){
       cells.push(`<i class="${l}"${fut ? '' : ` title="${day.toLocaleDateString('en-CA', { weekday: 'short', month: 'short', day: 'numeric' })}: ${m ? fmtMin(m) : 'no focus time'}"`}></i>`); }
   }
   const sw = k => `<i style="background:${k ? `color-mix(in oklab, var(--accent) ${k}%, var(--panel))` : 'color-mix(in oklab, var(--ink) 8%, transparent)'}"></i>`;
-  $('#logH').innerHTML = `<div class="heatgrid"><span></span><div class="heat-m">${months.join('')}</div><div class="heat-d"><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span><span>Sun</span></div><div class="heat" role="img" aria-label="Focus minutes per day over the last 26 weeks">${cells.join('')}</div></div>
-    <div class="legend" style="margin-top:8px">None ${sw(0)}${sw(30)}${sw(52)}${sw(76)}${sw(100)} 2 h or more · under 30 min, 30–60, 1–2 h</div>`;
-  $('#logS').innerHTML = LOG.list.slice(-8).reverse().map(e => `<li><span>${new Date(e.at).toLocaleString('en-CA', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span><span class="num">${fmtMin(e.m)}</span><span>${e.k === 'count' ? 'Countdown' : 'Focus'} · ${esc(themeName(e.s))}${e.full ? '' : ' · stopped early'}</span></li>`).join('')
+  $('#logH').innerHTML = `<div class="heatgrid"><span></span><div class="heat-m">${months.join('')}</div><div class="heat-d"><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span><span>Sun</span></div><div class="heat" role="img" aria-label="Focus minutes per day over the last 26 weeks">${cells.join('')}</div></div>`;
+  $('#logL').innerHTML = `None ${sw(0)}${sw(30)}${sw(52)}${sw(76)}${sw(100)} 2 h or more`;
+  $('#logL').title = 'Lighter to darker: under 30 min, 30–60 min, 1–2 h, 2 h or more';
+  $('#logH').scrollLeft = $('#logH').scrollWidth;
+  $('#logS').innerHTML = LOG.list.slice().sort((a, b) => b.at - a.at).slice(0, 8).map(e => `<li><span>${new Date(e.at).toLocaleString('en-CA', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span><span class="num">${fmtMin(e.m)}</span><span>${e.k === 'count' ? 'Countdown' : 'Focus'} · ${esc(themeName(e.s))}${e.full ? '' : ' · stopped early'}</span></li>`).join('')
     || '<li><span class="small" style="grid-column:1/-1">Nothing yet. Finish a focus round or a countdown (a minute or more counts) and it shows up here.</span></li>';
   $('#logA').innerHTML = !LOG.user && LOG.list.length ? '<button class="btn-s" id="logClear">Clear this browser’s log</button>' : '';
   if ($('#logClear')) $('#logClear').onclick = e => { const b = e.currentTarget; if (!b.dataset.sure) { b.dataset.sure = '1'; b.textContent = 'Click again to clear everything'; return; } LOG.list = []; logWrite(); renderLog(); };
@@ -907,17 +952,23 @@ function imagePalettes(px){
   };
   return { light: mk(false), dark: mk(true), neon };
 }
-// pixels of an image: a link needs the other site to allow it (CORS); a chosen file always works
+// pixels of an image. A chosen file always works. For a link: ask the site first; if it doesn't share its pixels,
+// read a tiny 72 px copy through wsrv.nl (free image service, no key; only used for colours, the background still
+// loads from the original link); if that fails too, just check the image opens.
 function readPixels(src){
   return new Promise(res => {
     const isData = src.startsWith('data:');
-    const tryLoad = cors => { const img = new Image(); if (cors) img.crossOrigin = 'anonymous';
-      img.onload = () => { if (!cors && !isData) return res({ err: 'cors' });
-        try { const k = Math.min(1, 72 / Math.max(img.naturalWidth, img.naturalHeight, 1)), cv = document.createElement('canvas'); cv.width = Math.max(1, Math.round(img.naturalWidth * k)); cv.height = Math.max(1, Math.round(img.naturalHeight * k));
-          const c = cv.getContext('2d', { willReadFrequently: true }); c.drawImage(img, 0, 0, cv.width, cv.height); res({ px: c.getImageData(0, 0, cv.width, cv.height).data }); } catch (e) { res({ err: 'cors' }); } };
-      img.onerror = () => { if (cors) tryLoad(false); else res({ err: 'load' }); };
-      img.src = src; };
-    tryLoad(!isData);
+    const pixels = img => { const k = Math.min(1, 72 / Math.max(img.naturalWidth, img.naturalHeight, 1)), cv = document.createElement('canvas');
+      cv.width = Math.max(1, Math.round(img.naturalWidth * k)); cv.height = Math.max(1, Math.round(img.naturalHeight * k));
+      const c = cv.getContext('2d', { willReadFrequently: true }); c.drawImage(img, 0, 0, cv.width, cv.height); return c.getImageData(0, 0, cv.width, cv.height).data; };
+    const next = step => { if (step === 'direct') { if (isData) res({ err: 'load' }); else tryLoad('proxy'); } else if (step === 'proxy') tryLoad('plain'); else res({ err: 'load' }); };
+    const tryLoad = step => {
+      const img = new Image(); if (step !== 'plain') img.crossOrigin = 'anonymous';
+      img.onload = () => { if (step === 'plain') return res({ err: 'cors' }); try { res({ px: pixels(img), via: step }); } catch (e) { next(step); } };
+      img.onerror = () => next(step);
+      img.src = step === 'proxy' ? `https://wsrv.nl/?url=${encodeURIComponent(src)}&w=72&h=72&fit=inside&output=png` : src;
+    };
+    tryLoad('direct');
   });
 }
 function applyBg(){
@@ -939,7 +990,7 @@ async function useBg(src){
   const keepNote = kept ? '' : ' This picture is too large to remember after you close the page; a smaller one will stay.';
   if (r.err === 'cors') { bgMsg(`The image is on. This site doesn’t share its colours with other pages, so pick a colour set that suits it: <button class="linkish" id="bgSw">show colour sets</button>.${keepNote}`);
     $('#bgSw').onclick = () => { $('#swatches').scrollIntoView({ behavior: 'smooth', block: 'center' }); $('#swatches').querySelector('[aria-pressed="true"]')?.focus(); }; return; }
-  bgMsg(`Colours found${SET.imgPal.neon ? ', with bright neon accents' : ''}. <button class="linkish" id="bgPick">Use the ${pal().dark ? 'dark' : 'light'} image colours</button>, or pick Image · light or Image · dark under Colours.${keepNote}`);
+  bgMsg(`Colours found${SET.imgPal.neon ? ', with bright neon accents' : ''}${r.via === 'proxy' ? ' (read through wsrv.nl, a free image service)' : ''}. <button class="linkish" id="bgPick">Use the ${pal().dark ? 'dark' : 'light'} image colours</button>, or pick Image · light or Image · dark under Colours.${keepNote}`);
   $('#bgPick').onclick = () => { SET.palette = pal().dark ? 'img-dark' : 'img-light'; saveSet(); applyPalette(); paintSw(); };
 }
 $('#bgUse').onclick = () => { const u = $('#bgUrl').value.trim(); if (!/^https?:\/\/\S+$/i.test(u)) return bgMsg('Paste a full link that starts with https://', true); useBg(u); };
@@ -1003,6 +1054,7 @@ async function fbDel(id){
 }
 const fbOpen = on => { $('#fb').hidden = !on; $('#fbBtn').setAttribute('aria-expanded', String(on)); if (on) $('#fbText').focus(); };
 $('#fbBtn').onclick = () => fbOpen($('#fb').hidden);
+$('#fbFromSet').onclick = () => { openSet(false); fbOpen(true); };
 $('#fbKind').onclick = e => { const b = e.target.closest('button'); if (!b) return; FB.kind = b.dataset.k; $('#fbKind').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); };
 $('#fbAdd').onclick = fbAdd;
 $('#fbText').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) fbAdd(); });

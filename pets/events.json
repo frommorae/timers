@@ -1,0 +1,135 @@
+[
+  {
+    "id": "new-year",
+    "name": "New Year",
+    "when": "Jan 1",
+    "items": [
+      "party",
+      "bowtie"
+    ]
+  },
+  {
+    "id": "lunar-new-year",
+    "name": "Lunar New Year",
+    "when": "Jan or Feb",
+    "items": [
+      "knot",
+      "scarf"
+    ]
+  },
+  {
+    "id": "family-day",
+    "name": "Family Day",
+    "when": "Feb, 3rd Monday",
+    "items": [
+      "beanie",
+      "scarf"
+    ]
+  },
+  {
+    "id": "valentines-day",
+    "name": "Valentine’s Day",
+    "when": "Feb 14",
+    "items": [
+      "heartband"
+    ]
+  },
+  {
+    "id": "st-patricks-day",
+    "name": "St. Patrick’s Day",
+    "when": "Mar 17",
+    "items": [
+      "shamrock",
+      "bowtie"
+    ]
+  },
+  {
+    "id": "easter",
+    "name": "Easter",
+    "when": "Mar or Apr",
+    "items": [
+      "bunnyears",
+      "collar"
+    ]
+  },
+  {
+    "id": "earth-day",
+    "name": "Earth Day",
+    "when": "Apr 22",
+    "items": [
+      "flowers"
+    ]
+  },
+  {
+    "id": "pride",
+    "name": "Pride",
+    "when": "June",
+    "items": [
+      "rainbow",
+      "bowtie"
+    ]
+  },
+  {
+    "id": "canada-day",
+    "name": "Canada Day",
+    "when": "Jul 1",
+    "items": [
+      "maple",
+      "bowtie"
+    ]
+  },
+  {
+    "id": "back-to-school",
+    "name": "Back to school",
+    "when": "Sep",
+    "items": [
+      "glasses",
+      "book"
+    ]
+  },
+  {
+    "id": "thanksgiving",
+    "name": "Thanksgiving",
+    "when": "Oct, 2nd Monday",
+    "items": [
+      "leafcrown",
+      "scarf"
+    ]
+  },
+  {
+    "id": "halloween",
+    "name": "Halloween",
+    "when": "Oct 31",
+    "items": [
+      "witch",
+      "cape"
+    ]
+  },
+  {
+    "id": "christmas",
+    "name": "Christmas",
+    "when": "Dec 25",
+    "items": [
+      "santa",
+      "collar"
+    ]
+  },
+  {
+    "id": "exam-season",
+    "name": "Exam season",
+    "when": "Around the exam date the person sets",
+    "items": [
+      "glasses",
+      "mug"
+    ]
+  },
+  {
+    "id": "busy-season",
+    "name": "Busy season",
+    "when": "Weeks the person marks",
+    "items": [
+      "headphones",
+      "lamp"
+    ]
+  }
+]

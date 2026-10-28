@@ -1,0 +1,240 @@
+[
+  {
+    "id": "beanie",
+    "name": "Beanie",
+    "anchor": "head",
+    "kind": "everyday",
+    "event": null
+  },
+  {
+    "id": "sunhat",
+    "name": "Sun hat",
+    "anchor": "head",
+    "kind": "everyday",
+    "event": null
+  },
+  {
+    "id": "crown",
+    "name": "Crown",
+    "anchor": "head",
+    "kind": "everyday",
+    "event": null
+  },
+  {
+    "id": "flowers",
+    "name": "Flower crown",
+    "anchor": "head",
+    "kind": "everyday",
+    "event": null
+  },
+  {
+    "id": "headphones",
+    "name": "Headphones",
+    "anchor": "head",
+    "kind": "everyday",
+    "event": null
+  },
+  {
+    "id": "glasses",
+    "name": "Study glasses",
+    "anchor": "face",
+    "kind": "everyday",
+    "event": null
+  },
+  {
+    "id": "sunglasses",
+    "name": "Shades, round",
+    "anchor": "face",
+    "kind": "everyday",
+    "event": null
+  },
+  {
+    "id": "starshades",
+    "name": "Star shades, sharp",
+    "anchor": "face",
+    "kind": "everyday",
+    "event": null
+  },
+  {
+    "id": "scarf",
+    "name": "Scarf",
+    "anchor": "neck",
+    "kind": "everyday",
+    "event": null
+  },
+  {
+    "id": "collar",
+    "name": "Collar and tag",
+    "anchor": "neck",
+    "kind": "everyday",
+    "event": null
+  },
+  {
+    "id": "bowtie",
+    "name": "Bow tie",
+    "anchor": "neck",
+    "kind": "everyday",
+    "event": null
+  },
+  {
+    "id": "cape",
+    "name": "Cape",
+    "anchor": "back",
+    "kind": "everyday",
+    "event": null
+  },
+  {
+    "id": "lights",
+    "name": "Fairy lights (plants)",
+    "anchor": "neck",
+    "kind": "everyday",
+    "event": null
+  },
+  {
+    "id": "book",
+    "name": "Book",
+    "anchor": "hand",
+    "kind": "study",
+    "event": null
+  },
+  {
+    "id": "mug",
+    "name": "Mug",
+    "anchor": "hand",
+    "kind": "study",
+    "event": null
+  },
+  {
+    "id": "lamp",
+    "name": "Desk lamp",
+    "anchor": "hand",
+    "kind": "study",
+    "event": null
+  },
+  {
+    "id": "visor",
+    "name": "Sun visor",
+    "anchor": "head",
+    "kind": "study",
+    "event": null
+  },
+  {
+    "id": "gradcap",
+    "name": "Graduation cap",
+    "anchor": "head",
+    "kind": "study",
+    "event": null
+  },
+  {
+    "id": "party",
+    "name": "Party hat",
+    "anchor": "head",
+    "kind": "event",
+    "event": "new-year"
+  },
+  {
+    "id": "knot",
+    "name": "Lucky knot",
+    "anchor": "head",
+    "kind": "event",
+    "event": "lunar-new-year"
+  },
+  {
+    "id": "heartband",
+    "name": "Heart band",
+    "anchor": "head",
+    "kind": "event",
+    "event": "valentines-day"
+  },
+  {
+    "id": "shamrock",
+    "name": "Shamrock band",
+    "anchor": "head",
+    "kind": "event",
+    "event": "st-patricks-day"
+  },
+  {
+    "id": "bunnyears",
+    "name": "Bunny ears",
+    "anchor": "head",
+    "kind": "event",
+    "event": "easter"
+  },
+  {
+    "id": "rainbow",
+    "name": "Rainbow band",
+    "anchor": "head",
+    "kind": "event",
+    "event": "pride"
+  },
+  {
+    "id": "maple",
+    "name": "Maple band",
+    "anchor": "head",
+    "kind": "event",
+    "event": "canada-day"
+  },
+  {
+    "id": "leafcrown",
+    "name": "Autumn leaves",
+    "anchor": "head",
+    "kind": "event",
+    "event": "thanksgiving"
+  },
+  {
+    "id": "witch",
+    "name": "Witch hat",
+    "anchor": "head",
+    "kind": "event",
+    "event": "halloween"
+  },
+  {
+    "id": "santa",
+    "name": "Santa hat",
+    "anchor": "head",
+    "kind": "event",
+    "event": "christmas"
+  },
+  {
+    "id": "ball",
+    "name": "Ball",
+    "anchor": "hand",
+    "kind": "toy",
+    "event": null
+  },
+  {
+    "id": "yarn",
+    "name": "Yarn",
+    "anchor": "hand",
+    "kind": "toy",
+    "event": null
+  },
+  {
+    "id": "donut",
+    "name": "Donut",
+    "anchor": "hand",
+    "kind": "treat",
+    "event": null
+  },
+  {
+    "id": "meat",
+    "name": "Meat",
+    "anchor": "hand",
+    "kind": "treat",
+    "event": null
+  },
+  {
+    "id": "juice",
+    "name": "Juice box",
+    "anchor": "hand",
+    "kind": "treat",
+    "event": null
+  },
+  {
+    "id": "cake",
+    "name": "Cake",
+    "anchor": "hand",
+    "kind": "treat",
+    "event": null
+  }
+]

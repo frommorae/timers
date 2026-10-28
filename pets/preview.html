@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Morae pets preview</title>
+<style>
+:root { --bg: #F1EAE0; --ink: #35291F; --ink2: #6B5A4B; --card: rgba(255,255,255,0.0); }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
+body.dark { --ink: #FFF8EF; --ink2: #D9C9B6; }
+header { position: sticky; top: 0; z-index: 2; background: var(--bg); padding: 12px 16px; border-bottom: 1px solid rgba(128,128,128,0.25); display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+h1 { font-size: 18px; margin: 0 12px 0 0; }
+button { font: inherit; font-weight: 700; border: 1px solid rgba(128,128,128,0.4); background: transparent; color: var(--ink); border-radius: 16px; padding: 4px 12px; cursor: pointer; }
+button[aria-pressed="true"] { background: #9E5426; color: #FFF8EF; border-color: #9E5426; }
+main { padding: 16px; }
+h2 { font-size: 16px; margin: 24px 0 8px; }
+.note { color: var(--ink2); margin: 4px 0 0; }
+.stills { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+.still { display: flex; align-items: center; gap: 4px; padding: 6px; border-radius: 8px; }
+.still span { font-size: 11px; color: inherit; }
+.pet { margin: 0 0 20px; }
+.grid { display: grid; grid-template-columns: 70px repeat(7, minmax(80px, 1fr)); gap: 4px; align-items: center; }
+.cell { aspect-ratio: 1; }
+.cell svg, .still svg { width: 100%; height: 100%; display: block; }
+.lbl { font-size: 12px; color: var(--ink2); }
+.s32 { width: 32px; height: 32px; flex: none; }
+</style>
+</head>
+<body>
+<header>
+<h1>Morae pets · geometric</h1>
+<span class="lbl">Background</span>
+<div id="bgs"></div>
+<button id="anim" aria-pressed="true">Animate</button>
+</header>
+<main>
+<p class="note">Every pet × stage × state from <code>morae-pets.js</code>, on the four test backgrounds from the brief, plus 32 px stills. Motion respects the system's reduced-motion setting.</p>
+<h2>32 px stills on all four backgrounds</h2>
+<div id="stills"></div>
+<h2>Every pet, stage and state</h2>
+<div id="pets"></div>
+</main>
+<script src="morae-pets.js"></script>
+<script>
+(function () {
+  var M = window.MoraePets;
+  var BGS = [['#F1EAE0', 'Sahara', false], ['#F2F4F7', 'Light grey', false], ['#13100D', 'Night', true], ['#171A23', 'Dark slate', true]];
+  var STATES = ['idle', 'focus', 'happy', 'rest', 'cold', 'celebrate', 'hungry'];
+  var animate = true;
+  var bgWrap = document.getElementById('bgs');
+  BGS.forEach(function (b, i) {
+    var btn = document.createElement('button');
+    btn.textContent = b[1];
+    btn.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+    btn.onclick = function () {
+      document.body.style.setProperty('--bg', b[0]);
+      document.body.classList.toggle('dark', b[2]);
+      bgWrap.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === btn ? 'true' : 'false'); });
+    };
+    bgWrap.appendChild(btn);
+  });
+  var stills = document.getElementById('stills');
+  BGS.forEach(function (b) {
+    var row = document.createElement('div');
+    row.className = 'stills';
+    row.style.background = b[0];
+    row.style.color = b[2] ? '#FFF8EF' : '#35291F';
+    row.style.padding = '8px';
+    row.style.borderRadius = '12px';
+    row.style.marginBottom = '8px';
+    M.pets.forEach(function (p) {
+      var c = document.createElement('div');
+      c.className = 'still';
+      c.innerHTML = '<div class="s32">' + M.svg({ pet: p.id, stage: 3, animate: false }) + '</div><div class="s32">' + M.svg({ pet: p.id, stage: 3, animate: false, frame: 'icon' }) + '</div><span>' + p.name + '</span>';
+      row.appendChild(c);
+    });
+    stills.appendChild(row);
+  });
+  var petsWrap = document.getElementById('pets');
+  var draw = function (sec) {
+    var p = sec._pet;
+    var html = '<div class="lbl"></div>' + STATES.map(function (s) { return '<div class="lbl">' + s + '</div>'; }).join('');
+    [1, 2, 3].forEach(function (stage) {
+      html += '<div class="lbl">' + ['First home', 'Young', 'Grown'][stage - 1] + '</div>';
+      STATES.forEach(function (s) { html += '<div class="cell">' + M.svg({ pet: p.id, stage: stage, state: s, animate: animate }) + '</div>'; });
+    });
+    sec.querySelector('.grid').innerHTML = html;
+    sec._drawn = true;
+  };
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting && !e.target._drawn) draw(e.target); });
+  }, { rootMargin: '400px' });
+  M.pets.forEach(function (p) {
+    var sec = document.createElement('section');
+    sec.className = 'pet';
+    sec._pet = p;
+    sec.innerHTML = '<h2>' + p.name + ' <span class="lbl">· ' + p.species + (p.design ? ' · ' + p.design : '') + ' · ' + p.words.join(' · ') + (p.starter ? ' · starter' : '') + (p.rare ? ' · rare ' + p.odds + '%' : '') + '</span></h2><div class="grid" style="min-height:300px"></div>';
+    petsWrap.appendChild(sec);
+    io.observe(sec);
+  });
+  document.getElementById('anim').onclick = function () {
+    animate = !animate;
+    this.setAttribute('aria-pressed', animate ? 'true' : 'false');
+    document.querySelectorAll('section.pet').forEach(function (sec) { if (sec._drawn) draw(sec); });
+  };
+})();
+</script>
+</body>
+</html>
